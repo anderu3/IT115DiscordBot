@@ -9,7 +9,6 @@ from ec2_metadata import ec2_metadata
 load_dotenv('opgg.env')
 
 intents = discord.Intents.default()
-intents.messages = True
 intents.message_content = True
 
 client = discord.Client(intents=intents)
