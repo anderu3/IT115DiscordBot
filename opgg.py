@@ -16,10 +16,17 @@ client = discord.Client(intents=intents)
 client = commands.Bot(command_prefix='!', intents=intents)
 token = os.getenv('TOKEN')
 
+ip_address = ec2_metadata.public_ipv4 or ec2_metadata.private_ipv4
+region = ec2_metadata.region
+avail_zone = ec2_metadata.availability_zone
+
 @client.event 
 async def on_ready(): 
     print("Logged in as a bot {0.user}".format(client))
-    print(f"Your EC2 Data: {ec2_metadata.region}")
+    if ip_address and region and avail_zone:
+        print(f"Your EC2 Data are as follows: IP Address: {ip_address}, Region: {region}, Availability Zone: {avail_zone}")
+    else:
+        print("Could not retrieve EC2_metadata.")
 
 @client.event 
 async def on_message(message): 
@@ -41,11 +48,19 @@ async def on_message(message):
         elif user_message.lower() == "tell me a joke": 
             jokes = ["Parallel lines have so much in common but it’s a shame they’ll never meet.", "A man walked into his house and was delighted when he discovered that someone had stolen all of his lamps.", "I have an inferiority complex, but it's not a very good one."] 
             await message.channel.send(random.choice(jokes)) 
+        elif user_message.lower() == "tell me about my server!":
+            if ip_address and region and avail_zone:
+                await message.channel.send(f"Your EC2 Data are as follows: IP Address: {ip_address}, Region: {region}, Availability Zone: {avail_zone}")
+            else:
+                await message.channel.send("Sorry but I could not retrieve the EC2_metadata for this server.")
     
     await client.process_commands(message)
 
 @client.command()
 async def opgg(ctx, *, summoner: str):
-    encoded_summoner = summoner.replace("#", "-")
-    await ctx.send(f'OPGG link for {summoner}: https://na.op.gg/summoner/userName={encoded_summoner}')
+    if summoner.count("#") == 1:
+        encoded_summoner = summoner.replace("#", "-")
+        await ctx.send(f'OPGG link for {summoner}: https://na.op.gg/summoner/userName={encoded_summoner}')
+    else:
+        await ctx.send("The correct format must be SummonerName#Tag, please try again.")
 client.run(token)
