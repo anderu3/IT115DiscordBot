@@ -10,6 +10,7 @@ load_dotenv('opgg.env')
 
 intents = discord.Intents.default()
 intents.messages = True
+intents.message_content = True
 
 client = discord.Client(intents=intents)
 client = commands.Bot(command_prefix='!', intents=intents)
@@ -38,7 +39,7 @@ async def on_message(message):
         elif user_message.lower() == "bye": 
             await message.channel.send(f'Bye {username}') 
         elif user_message.lower() == "tell me a joke": 
-            jokes = ["test"] 
+            jokes = ["Parallel lines have so much in common but it’s a shame they’ll never meet.", "A man walked into his house and was delighted when he discovered that someone had stolen all of his lamps.", "I have an inferiority complex, but it's not a very good one."] 
             await message.channel.send(random.choice(jokes)) 
     
     await client.process_commands(message)
