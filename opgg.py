@@ -9,7 +9,7 @@ from ec2_metadata import ec2_metadata
 load_dotenv('opgg.env')
 
 intents = discord.Intents.default()
-intents.message_content = True
+intents.messages = True
 
 client = discord.Client(intents=intents)
 client = commands.Bot(command_prefix='!', intents=intents)
